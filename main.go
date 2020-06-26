@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/walmartdigital/gomock-tutorial-code/pkg/client"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	http.HandleFunc("/monkeys", monkeys)
 	http.HandleFunc("/dogs", dogs)
 	go http.ListenAndServe(":8080", nil)
-	fmt.Println(client.ReadMessage("monkeys"))
-	fmt.Println(client.ReadMessage("dogs"))
+	c := resty.New()
+	fmt.Println(client.ReadMessage(c.R(), "monkeys"))
+	fmt.Println(client.ReadMessage(c.R(), "dogs"))
 }
