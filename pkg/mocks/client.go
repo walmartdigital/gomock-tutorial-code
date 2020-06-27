@@ -5,45 +5,83 @@
 package mocks
 
 import (
-	resty "github.com/go-resty/resty/v2"
 	gomock "github.com/golang/mock/gomock"
+	client "github.com/walmartdigital/gomock-tutorial-code/pkg/client"
 	reflect "reflect"
 )
 
-// MockHTTPRequest is a mock of HTTPRequest interface
-type MockHTTPRequest struct {
+// MockHTTPClient is a mock of HTTPClient interface
+type MockHTTPClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockHTTPRequestMockRecorder
+	recorder *MockHTTPClientMockRecorder
 }
 
-// MockHTTPRequestMockRecorder is the mock recorder for MockHTTPRequest
-type MockHTTPRequestMockRecorder struct {
-	mock *MockHTTPRequest
+// MockHTTPClientMockRecorder is the mock recorder for MockHTTPClient
+type MockHTTPClientMockRecorder struct {
+	mock *MockHTTPClient
 }
 
-// NewMockHTTPRequest creates a new mock instance
-func NewMockHTTPRequest(ctrl *gomock.Controller) *MockHTTPRequest {
-	mock := &MockHTTPRequest{ctrl: ctrl}
-	mock.recorder = &MockHTTPRequestMockRecorder{mock}
+// NewMockHTTPClient creates a new mock instance
+func NewMockHTTPClient(ctrl *gomock.Controller) *MockHTTPClient {
+	mock := &MockHTTPClient{ctrl: ctrl}
+	mock.recorder = &MockHTTPClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockHTTPRequest) EXPECT() *MockHTTPRequestMockRecorder {
+func (m *MockHTTPClient) EXPECT() *MockHTTPClientMockRecorder {
 	return m.recorder
 }
 
 // Get mocks base method
-func (m *MockHTTPRequest) Get(url string) (*resty.Response, error) {
+func (m *MockHTTPClient) Get(url string) (int, []byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", url)
-	ret0, _ := ret[0].(*resty.Response)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].([]byte)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // Get indicates an expected call of Get
-func (mr *MockHTTPRequestMockRecorder) Get(url interface{}) *gomock.Call {
+func (mr *MockHTTPClientMockRecorder) Get(url interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockHTTPRequest)(nil).Get), url)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockHTTPClient)(nil).Get), url)
+}
+
+// MockHTTPClientFactory is a mock of HTTPClientFactory interface
+type MockHTTPClientFactory struct {
+	ctrl     *gomock.Controller
+	recorder *MockHTTPClientFactoryMockRecorder
+}
+
+// MockHTTPClientFactoryMockRecorder is the mock recorder for MockHTTPClientFactory
+type MockHTTPClientFactoryMockRecorder struct {
+	mock *MockHTTPClientFactory
+}
+
+// NewMockHTTPClientFactory creates a new mock instance
+func NewMockHTTPClientFactory(ctrl *gomock.Controller) *MockHTTPClientFactory {
+	mock := &MockHTTPClientFactory{ctrl: ctrl}
+	mock.recorder = &MockHTTPClientFactoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockHTTPClientFactory) EXPECT() *MockHTTPClientFactoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockHTTPClientFactory) Create() client.HTTPClient {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create")
+	ret0, _ := ret[0].(client.HTTPClient)
+	return ret0
+}
+
+// Create indicates an expected call of Create
+func (mr *MockHTTPClientFactoryMockRecorder) Create() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockHTTPClientFactory)(nil).Create))
 }

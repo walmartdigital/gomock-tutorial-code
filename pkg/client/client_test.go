@@ -22,15 +22,28 @@ func TestAll(t *testing.T) {
 
 var _ = Describe("Read message", func() {
 	var (
-		fakeHTTPRequest *mocks.MockHTTPRequest
+		fakeHTTPClient        *mocks.MockHTTPClient
+		fakeHTTPClientFactory *mocks.MockHTTPClientFactory
+		zooClient             *client.ZooClient
 	)
 
 	BeforeEach(func() {
-		fakeHTTPRequest = mocks.NewMockHTTPRequest(ctrl)
+		fakeHTTPClient = mocks.NewMockHTTPClient(ctrl)
+		fakeHTTPClientFactory = mocks.NewMockHTTPClientFactory(ctrl)
+		fakeHTTPClientFactory.EXPECT().Create().Return(
+			fakeHTTPClient,
+		).Times(1)
+		zooClient = client.NewZooClient(fakeHTTPClientFactory)
 	})
 
 	It("should read a message from the server", func() {
-		msg := client.ReadMessage(fakeHTTPRequest, "dogs")
+		fakeHTTPClient.EXPECT().Get("http://localhost:8080/dogs").Return(
+			200,
+			[]byte("Hi there, I love dogs!"),
+			nil,
+		).Times(1)
+
+		msg := zooClient.ReadMessage("dogs")
 		Expect(msg).To(Equal("Hi there, I love dogs!"))
 	})
 })
