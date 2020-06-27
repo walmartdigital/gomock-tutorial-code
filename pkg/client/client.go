@@ -2,13 +2,33 @@ package client
 
 import (
 	"fmt"
-
-	resty "github.com/go-resty/resty/v2"
 )
 
+// HTTPClient ...
+type HTTPClient interface {
+	Get(url string) (int, []byte, error)
+}
+
+// HTTPClientFactory ...
+type HTTPClientFactory interface {
+	Create() HTTPClient
+}
+
+// ZooClient ...
+type ZooClient struct {
+	client HTTPClient
+}
+
+// NewZooClient ...
+func NewZooClient(factory HTTPClientFactory) *ZooClient {
+	client := ZooClient{
+		client: factory.Create(),
+	}
+	return &client
+}
+
 // ReadMessage ...
-func ReadMessage(animal string) string {
-	client := resty.New()
-	resp, _ := client.R().Get(fmt.Sprintf("http://localhost:8080/%s", animal))
-	return string(resp.Body())
+func (z *ZooClient) ReadMessage(animal string) string {
+	_, body, _ := z.client.Get(fmt.Sprintf("http://localhost:8080/%s", animal))
+	return string(body)
 }
