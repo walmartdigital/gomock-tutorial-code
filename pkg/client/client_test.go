@@ -37,6 +37,11 @@ var _ = Describe("Read message", func() {
 	})
 
 	It("should read a message from the server", func() {
+		fakeHTTPClient.EXPECT().Get("http://localhost:8080/dogs").Return(
+			200,
+			[]byte("Hi there, I love dogs!"),
+			nil,
+		).Times(1)
 		msg := zooClient.ReadMessage("dogs")
 		Expect(msg).To(Equal("Hi there, I love dogs!"))
 	})
