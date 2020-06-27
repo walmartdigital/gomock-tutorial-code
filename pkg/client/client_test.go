@@ -22,12 +22,17 @@ func TestAll(t *testing.T) {
 
 var _ = Describe("Read message", func() {
 	var (
+		fakeHTTPClient        *mocks.MockHTTPClient
 		fakeHTTPClientFactory *mocks.MockHTTPClientFactory
 		zooClient             *client.ZooClient
 	)
 
 	BeforeEach(func() {
+		fakeHTTPClient = mocks.NewMockHTTPClient(ctrl)
 		fakeHTTPClientFactory = mocks.NewMockHTTPClientFactory(ctrl)
+		fakeHTTPClientFactory.EXPECT().Create().Return(
+			fakeHTTPClient,
+		).Times(1)
 		zooClient = client.NewZooClient(fakeHTTPClientFactory)
 	})
 
