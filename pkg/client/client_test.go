@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -44,5 +45,25 @@ var _ = Describe("Read message", func() {
 		).Times(1)
 		msg := zooClient.ReadMessage("dogs")
 		Expect(msg).To(Equal("Hi there, I love dogs!"))
+	})
+
+	It("should answer that it doesn't know the provided type of animals", func() {
+		fakeHTTPClient.EXPECT().Get("http://localhost:8080/elephants").Return(
+			404,
+			[]byte("Not found"),
+			nil,
+		).Times(1)
+		msg := zooClient.ReadMessage("elephants")
+		Expect(msg).To(Equal("Hi there, what is an elephant!"))
+	})
+
+	It("should answer that it doesn't know the provided type of animals", func() {
+		fakeHTTPClient.EXPECT().Get("http://localhost:8080/dogs").Return(
+			-1,
+			nil,
+			errors.New("Could not connect to server"),
+		).Times(1)
+		msg := zooClient.ReadMessage("dogs")
+		Expect(msg).To(Equal("Hi there, the zoo is closed!"))
 	})
 })
