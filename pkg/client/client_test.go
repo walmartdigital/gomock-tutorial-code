@@ -54,7 +54,7 @@ var _ = Describe("Read message", func() {
 			nil,
 		).Times(1)
 		msg := zooClient.ReadMessage("elephants")
-		Expect(msg).To(Equal("Not found"))
+		Expect(msg).To(Equal("Hi there, what is an elephant!"))
 	})
 
 	It("should answer that it doesn't know the provided type of animals", func() {
@@ -64,6 +64,6 @@ var _ = Describe("Read message", func() {
 			errors.New("Could not connect to server"),
 		).Times(1)
 		msg := zooClient.ReadMessage("dogs")
-		Expect(msg).To(Equal(""))
+		Expect(msg).To(Equal("Hi there, the zoo is closed!"))
 	})
 })
